@@ -5,15 +5,18 @@ from PyPDF2 import PdfFileMerger
 
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:54.0) Gecko/20100101 Firefox/54.0'}
 
+# 网页URL
 web_pages = ['http://speech.ee.ntu.edu.tw/~tlkagk/courses_MLDS18.html',
              'http://speech.ee.ntu.edu.tw/~tlkagk/courses_ML17_2.html']
 
+# 创建一个目录 用于保存合并前的所有PDF
 def CreateDir(url):
     folder_path = url.split("/")[-1].split('.')[0]
     if not os.path.exists(folder_path):
         os.mkdir(folder_path)
     return folder_path
 
+# 下载单个PDF
 def savePDF(fp, pdf_url, pdf_name):
     try:
         res = requests.get(pdf_url, headers=headers, stream=True).content
@@ -24,6 +27,7 @@ def savePDF(fp, pdf_url, pdf_name):
 
     print(pdf_name + ' down finished!')
 
+# 下载URL所有PDF文件
 def Down(fp, url):
     try:
         res = requests.request("get", url=url, timeout=10000).text # text->unicode content->bytes for file or pic
@@ -36,6 +40,7 @@ def Down(fp, url):
     print(url + ' down finished!')
     print('#############################################################')
 
+# 将该文件路径下所有PDF文件按时间顺序合并 输出到根目录下
 def Merge(fp):
     merger = PdfFileMerger()
     items = [(fp + '/' + i, os.stat(fp + '/' + i).st_mtime) for i in os.listdir(fp)] # use downloading timeline
